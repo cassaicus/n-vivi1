@@ -8,34 +8,37 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedImage: UIImage?
+    @State private var selectedImages: [UIImage] = []
     @State private var isPickerPresented = false
 
     var body: some View {
         NavigationView {
             VStack {
-                if let selectedImage = selectedImage {
-                    Image(uiImage: selectedImage)
-                        .resizable()
-                        .scaledToFit()
-                        .padding()
+                if !selectedImages.isEmpty {
+                    TabView {
+                        ForEach(selectedImages, id: \.self) { img in
+                            Image(uiImage: img)
+                                .resizable()
+                                .scaledToFit()
+                                .padding()
+                        }
+                    }
+                    .tabViewStyle(PageTabViewStyle())
                 } else {
-                    Text("No Image Selected")
+                    Text("No Images Selected")
                         .font(.headline)
                 }
-
-                Spacer()
             }
-            .navigationTitle("iCloud Image Viewer")
+            .navigationTitle("Image Gallery")
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
-                    Button("Select Image") {
+                    Button("Select Images") {
                         isPickerPresented = true
                     }
                 }
             }
             .sheet(isPresented: $isPickerPresented) {
-                ImagePicker(selectedImage: $selectedImage)
+                ImagePicker(selectedImages: $selectedImages)
             }
         }
     }
